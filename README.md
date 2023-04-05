@@ -42,7 +42,7 @@ To use the script, you will need to follow these steps:
 6. Set the objective of the task management system in the OBJECTIVE variable. Alternatively you can pass it to the script as a quote argument.
 
 ```bash
-node index.js ["<objective>"]
+npm run start ["<objective>"]
 ```
 
 7. Set the first task of the system in the FIRST_TASK variable.
