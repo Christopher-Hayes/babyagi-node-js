@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "AI-powered task management system using OpenAI and Pinecone APIs",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "openai": "^0.27.0",
-    "pinecone-node-sdk": "^1.0.4",
-    "dotenv": "^10.0.0"
+    "@pinecone-database/pinecone": "^0.0.12",
+    "dotenv": "^16.0.3",
+    "openai": "^3.2.1"
   }
 }

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
-const openai = require("openai");
-const pinecone = require("pinecone-node-sdk");
-const dotenv = require("dotenv");
+import openai from 'openai';
+import { PineconeClient } from '@pinecone-database/pinecone';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -13,6 +13,8 @@ const PINECONE_ENVIRONMENT = process.env.PINECONE_ENVIRONMENT || "us-east1-gcp";
 const YOUR_TABLE_NAME = process.env.TABLE_NAME;
 const OBJECTIVE = process.argv[2] || process.env.OBJECTIVE;
 const YOUR_FIRST_TASK = process.env.FIRST_TASK;
+
+// Set to "true" to use gpt-4. Be aware that gpt-4 is between 15x and 30x more expensive than gpt-3.5-turbo
 const USE_GPT4 = false;
 
 if (!OPENAI_API_KEY) {
@@ -35,19 +37,28 @@ console.log("\x1b[96m\x1b[1m\n*****OBJECTIVE*****\n\x1b[0m\x1b[0m");
 console.log(OBJECTIVE);
 
 openai.apiKey = OPENAI_API_KEY;
-pinecone.initializeApp(PINECONE_API_KEY, PINECONE_ENVIRONMENT);
+const pinecone = new PineconeClient();
+await pinecone.init({
+  apiKey: PINECONE_API_KEY,
+  environment: PINECONE_ENVIRONMENT,
+})
 
 const tableName = YOUR_TABLE_NAME;
 const dimension = 1536;
 const metric = "cosine";
 const podType = "p1";
-pinecone.listIndexes().then((indexes) => {
-  if (!indexes.includes(tableName)) {
-    pinecone.createIndex(tableName, dimension, metric, podType);
-  }
-});
 
-const index = new pinecone.Index(tableName);
+const indexList = pinecone.listIndexes();
+  if (!indexList.includes(tableName)) {
+    awwait pinecone.createIndex({
+      name: tableName,
+      dimension,
+      metric,
+      podType
+    });
+  }
+
+const index = pinecone.Index(tableName);
 const taskList = [];
 
 function addTask(task) {
